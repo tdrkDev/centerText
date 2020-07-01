@@ -5,21 +5,6 @@
 export CTXT_COLS=$(tput cols)
 export CTXT_LINES=$(tput lines)
 
-# Argument checks
-if [ -z "$1" ] || [ -z "$2" ]; then
-    echo "Usage: $0 'dimension' 'text'"
-    echo "Puts your text to the center of terminal."
-    echo -e "Dimensions:\n- X\n- Y\n- XY"
-    exit 0
-fi
-
-# Text lines to array items
-endtext="$(echo "$2" | fold -w $CTXT_COLS)"
-textarr=()
-while IFS= read -r line; do
-    textarr+=("$line")
-done <<<$endtext
-
 putTextToTheCenterY() {
     if [ ${#textarr[@]} > 1 ]; then
         CTXT_CENTER_TEXT_Y_COORD="$(expr $(expr $CTXT_LINES / 2) - $(expr ${#textarr[@]} / 2) )"
@@ -98,6 +83,25 @@ putTextToTheCenterX() {
         echo
     done
 }
+
+# Argument checks
+if [ -z "$1" ] || [ -z "$2" ]; then
+    USAGE="$(echo -e "Usage: $0 'dimension' 'text'\nPuts your text to the center of terminal.\nDimensions:\nX, Y and XY")"
+    endtext="$(echo "$USAGE" | fold -w $CTXT_COLS)"
+    textarr=()
+    while IFS= read -r line; do
+        textarr+=("$line")
+    done <<<$endtext
+    putTextToTheCenterXY
+    exit 0
+fi
+
+# Text lines to array items
+endtext="$(echo "$2" | fold -w $CTXT_COLS)"
+textarr=()
+while IFS= read -r line; do
+    textarr+=("$line")
+done <<<$endtext
 
 case "$1" in
 XY) putTextToTheCenterXY
