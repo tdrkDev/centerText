@@ -1,0 +1,111 @@
+#!/bin/bash 
+# centerText v0.1
+
+# Terminal dimensions in variables
+export CTXT_COLS=$(tput cols)
+export CTXT_LINES=$(tput lines)
+
+# Argument checks
+if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "Usage: $0 'dimension' 'text'"
+    echo "Puts your text to the center of terminal."
+    echo -e "Dimensions:\n- X\n- Y\n- XY"
+    exit 0
+fi
+
+# Text lines to array items
+endtext="$(echo "$2" | fold -w $CTXT_COLS)"
+textarr=()
+while IFS= read -r line; do
+    textarr+=("$line")
+done <<<$endtext
+
+putTextToTheCenterY() {
+    if [ ${#textarr[@]} > 1 ]; then
+        CTXT_CENTER_TEXT_Y_COORD="$(expr $(expr $CTXT_LINES / 2) - $(expr ${#textarr[@]} / 2) )"
+    else
+        CTXT_CENTER_TEXT_Y_COORD="$(expr $(expr $CTXT_LINES / 2) - 1)"
+    fi
+
+    for ((n=0;n<$CTXT_CENTER_TEXT_Y_COORD;n++))
+    do
+        printf '\n'
+    done
+
+    for ((i=0;i<${#textarr[@]};i++))
+    do
+        printf '%s' "${textarr[$i]}"
+    done
+
+    for ((n=0;n<$CTXT_CENTER_TEXT_Y_COORD;n++))
+    do
+        printf '\n'
+    done
+}
+
+putTextToTheCenterXY() {
+    if [ ${#textarr[@]} > 1 ]; then
+        CTXT_CENTER_TEXT_Y_COORD="$(expr $(expr $CTXT_LINES / 2) - $(expr ${#textarr[@]} / 2) )"
+    else
+        CTXT_CENTER_TEXT_Y_COORD="$(expr $(expr $CTXT_LINES / 2) - 1)"
+    fi
+
+    for ((n=0;n<$CTXT_CENTER_TEXT_Y_COORD;n++))
+    do
+        printf '\n'
+    done
+
+    for ((i=0;i<${#textarr[@]};i++))
+    do
+        CTXT_TEXT_SIZE="$(expr $(echo "${textarr[$i]}" | wc -m) - 1)"
+        CTXT_TEMP_X_COORD="$(expr $(expr $CTXT_COLS / 2) - $(expr $CTXT_TEXT_SIZE / 2))"
+
+        if [ $(expr $(expr $CTXT_TEMP_X_COORD \* 2) + $CTXT_TEXT_SIZE) != $CTXT_COLS ]; then
+            CTXT_TEMP_X_COORD="$(expr $(expr $CTXT_COLS / 2) - $(expr $(expr $CTXT_TEXT_SIZE - 1) / 2))"
+        fi
+
+        for ((n=0;n<$CTXT_TEMP_X_COORD;n++))
+        do
+            printf '%s' ' '
+        done
+
+        printf '%s' "${textarr[$i]}"
+        echo
+    done
+
+    for ((n=0;n<$CTXT_CENTER_TEXT_Y_COORD;n++))
+    do
+        printf '\n'
+    done
+}
+
+putTextToTheCenterX() {
+    for ((i=0;i<${#textarr[@]};i++))
+    do
+        CTXT_TEXT_SIZE="$(expr $(echo "${textarr[$i]}" | wc -m) - 1)"
+        CTXT_TEMP_X_COORD="$(expr $(expr $CTXT_COLS / 2) - $(expr $CTXT_TEXT_SIZE / 2))"
+
+        if [ $(expr $(expr $CTXT_TEMP_X_COORD \* 2) + $CTXT_TEXT_SIZE) != $CTXT_COLS ]; then
+            CTXT_TEMP_X_COORD="$(expr $(expr $CTXT_COLS / 2) - $(expr $(expr $CTXT_TEXT_SIZE - 1) / 2))"
+        fi
+
+        for ((n=0;n<$CTXT_TEMP_X_COORD;n++))
+        do
+            printf '%s' ' '
+        done
+
+        printf '%s' "${textarr[$i]}"
+        echo
+    done
+}
+
+case "$1" in
+XY) putTextToTheCenterXY
+;;
+X) putTextToTheCenterX
+;;
+Y) putTextToTheCenterY
+;;
+*) echo "$1 dimension not exist."
+;;
+esac
