@@ -1,12 +1,12 @@
 #!/bin/bash 
-# centerText v0.1
+# centerText v0.1.1
 
 # Terminal dimensions in variables
 export CTXT_COLS=$(tput cols)
 export CTXT_LINES=$(tput lines)
 
 putTextToTheCenterY() {
-    if [ ${#textarr[@]} > 1 ]; then
+    if [ ${#textarr[@]} -gt 1 ]; then
         CTXT_CENTER_TEXT_Y_COORD="$(expr $(expr $CTXT_LINES / 2) - $(expr ${#textarr[@]} / 2) )"
     else
         CTXT_CENTER_TEXT_Y_COORD="$(expr $(expr $CTXT_LINES / 2) - 1)"
@@ -29,7 +29,7 @@ putTextToTheCenterY() {
 }
 
 putTextToTheCenterXY() {
-    if [ ${#textarr[@]} > 1 ]; then
+    if [ ${#textarr[@]} -gt 1 ]; then
         CTXT_CENTER_TEXT_Y_COORD="$(expr $(expr $CTXT_LINES / 2) - $(expr ${#textarr[@]} / 2) )"
     else
         CTXT_CENTER_TEXT_Y_COORD="$(expr $(expr $CTXT_LINES / 2) - 1)"
